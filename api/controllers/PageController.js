@@ -11,6 +11,8 @@ dotenv.load();
 var Twitter = require('twitter');
 var LastFmNode = require('lastfm').LastFmNode;
 var LastfmAPI = require('lastfmapi');
+var sentiment = require('sentiment');
+var nlp = require("nlp_compromise")
 
 var twits = new Twitter({
   consumer_key: process.env.CONSUMER_KEY,
@@ -30,19 +32,22 @@ var lastfm = new LastFmNode({
   // useragent: 'appname/vX.X MyApp' // optional. defaults to lastfm-node.
 });
 
-// twits.stream('statuses/filter', {track: 'I feel'}, function(stream) {
-//   stream.on('data', function(tweet) {
-//     console.log(tweet.text);
-//   });
+twits.stream('statuses/filter', {track: 'javascript'}, function(stream) {
+  stream.on('data', function(tweet) {
+    var pos = nlp.pos(tweet.text);
+    var sent = sentiment(tweet.text);
+    console.log("Part of speech: ", pos);
+    console.log("sentiment: ", sent);
+  });
 
-//   stream.on('error', function(error) {
-//     throw error;
-//   });
-// });
+  stream.on('error', function(error) {
+    throw error;
+  });
+});
 
-lfm.geo.getMetros(function(err, metros){
-  console.log(metros)
-})
+// lfm.geo.getMetros(function(err, metros){
+//   console.log(metros)
+// })
 
 module.exports = {
   index: function(req,res){
