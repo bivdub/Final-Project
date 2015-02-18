@@ -32,18 +32,18 @@ var lastfm = new LastFmNode({
   // useragent: 'appname/vX.X MyApp' // optional. defaults to lastfm-node.
 });
 
-twits.stream('statuses/filter', {track: 'javascript'}, function(stream) {
-  stream.on('data', function(tweet) {
-    var pos = nlp.pos(tweet.text);
-    var sent = sentiment(tweet.text);
-    console.log("Part of speech: ", pos);
-    console.log("sentiment: ", sent);
-  });
+// twits.stream('statuses/filter', {track: 'javascript'}, function(stream) {
+//   stream.on('data', function(tweet) {
+//     var pos = nlp.pos(tweet.text);
+//     var sent = sentiment(tweet.text);
+//     console.log("Part of speech: ", pos);
+//     console.log("sentiment: ", sent);
+//   });
 
-  stream.on('error', function(error) {
-    throw error;
-  });
-});
+//   stream.on('error', function(error) {
+//     throw error;
+//   });
+// });
 
 // lfm.geo.getMetros(function(err, metros){
 //   console.log(metros)
