@@ -12,7 +12,7 @@ var Twitter = require('twitter');
 var LastFmNode = require('lastfm').LastFmNode;
 var LastfmAPI = require('lastfmapi');
 var sentiment = require('sentiment');
-var nlp = require("nlp_compromise")
+// var nlp = require("nlp_compromise")
 
 var twits = new Twitter({
   consumer_key: process.env.CONSUMER_KEY,
@@ -32,18 +32,38 @@ var lastfm = new LastFmNode({
   // useragent: 'appname/vX.X MyApp' // optional. defaults to lastfm-node.
 });
 
-twits.stream('statuses/filter', {track: 'javascript'}, function(stream) {
-  stream.on('data', function(tweet) {
-    var pos = nlp.pos(tweet.text);
-    var sent = sentiment(tweet.text);
-    console.log("Part of speech: ", pos);
-    console.log("sentiment: ", sent);
-  });
+// twits.stream('statuses/filter', {track: 'javascript'}, function(stream) {
+//   stream.on('data', function(tweet) {
+//     var pos = nlp.spot(tweet.text);
+//     var sent = sentiment(tweet.text);
+//     console.log("Part of speech: ", pos);
+//     console.log("sentiment: ", sent);
+//   });
 
-  stream.on('error', function(error) {
-    throw error;
-  });
-});
+//   stream.on('error', function(error) {
+//     throw error;
+//   });
+// });
+
+// twits.get('search/tweets', {q: 'coffee', lang: 'en', geocode:"47.6097,-122.3331,100mi", count: 100}, function(error, data, response) {
+
+//     // console.log(error)
+//     console.log(data.statuses)
+//     if (error) throw error;
+//     var tweetResults = data.statuses.map(function(tweet) {
+//       return tweet.text.split(' ').map(function(word){
+//         return word.replace('@','').replace('#','').replace('...', '').replace('.', '').replace(',', '').replace('…', '').replace('RT', '');
+//       }).join(' ');
+//     })
+
+//     var sent = tweetResults.map(function(tweet){
+//       return sentiment(tweet);
+//     });
+
+//     sent.forEach(function(el){
+//       console.log("sentiment: ", el.score);
+//     });
+// });
 
 // lfm.geo.getMetros(function(err, metros){
 //   console.log(metros)
@@ -51,27 +71,46 @@ twits.stream('statuses/filter', {track: 'javascript'}, function(stream) {
 
 module.exports = {
   index: function(req,res){
+      twits.get('search/tweets', {q: 'coffee', lang: 'en', geocode:"47.6097,-122.3331,100mi", count: 100}, function(error, data, response) {
+
+        // console.log(error)
+        // console.log(data.statuses)
+        if (error) throw error;
+        var tweetResults = data.statuses.map(function(tweet) {
+          return tweet.text.split(' ').map(function(word){
+            return word.replace('@','').replace('#','').replace('...', '').replace('.', '').replace(',', '').replace('…', '').replace('RT', '');
+          }).join(' ');
+        })
+
+        var sent = tweetResults.map(function(tweet){
+          return sentiment(tweet);
+        });
+
+        // sent.forEach(function(el){
+        //   console.log("sentiment: ", el.score);
+        // });
+        res.view('index', {tweets: tweetResults, sentiment: sent});
+      });
       // console.log(moby.search('furious'));
       // console.log(moby.reverseSearch('furious'));
-      res.view('index');
     },
-    getTweets: function(searchTerm,callback){
-        twits.get('search/tweets', {q: searchTerm +'-RT', 'result_type': 'mixed', lang: 'en', count: 200}, function(error, data, response) {
+  getTweets: function(searchTerm,callback){
+      twits.get('search/tweets', {q: searchTerm +'-RT', 'result_type': 'mixed', lang: 'en', count: 200}, function(error, data, response) {
 
-            // console.log(error);
-            if (error) throw error;
-            var tweetResults = data.statuses.filter(function(tweet){
-                return true;//(tweet.text.indexOf("@") === -1);
-            }).map(function(tweet) {
-                return tweet.text;
-            }).join(' ').split(" ").map(function(word){
-                return word.replace('@','').replace('#','').replace('...', '').replace('.', '').replace(',', '').replace('…', '');
-            }).filter(function(word){
-                return (word.length > 3 && word.indexOf("://") === -1);
-            });
+          // console.log(error);
+          if (error) throw error;
+          var tweetResults = data.statuses.filter(function(tweet){
+              return true;//(tweet.text.indexOf("@") === -1);
+          }).map(function(tweet) {
+              return tweet.text;
+          }).join(' ').split(" ").map(function(word){
+              return word.replace('@','').replace('#','').replace('...', '').replace('.', '').replace(',', '').replace('…', '');
+          }).filter(function(word){
+              return (word.length > 3 && word.indexOf("://") === -1);
+          });
 
-            tweetResults = tweetResults.removeDuplicate();
-            callback(tweetResults.join(' '));
-        });
-      }
+          tweetResults = tweetResults.removeDuplicate();
+          callback(tweetResults.join(' '));
+      });
+    }
   };
