@@ -1,0 +1,22 @@
+{
+  "name": "Final-Project",
+  "version": "0.0.0",
+  "homepage": "https://github.com/bivdub/Final-Project",
+  "authors": [
+    "JustWyoming <wyomingt@gmail.com>"
+  ],
+  "description": "i feels",
+  "license": "MIT",
+  "private": false,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "nvd3": "~1.7.1",
+    "angularjs-nvd3-directives": "~0.0.7"
+  }
+}
