@@ -1,0 +1,48 @@
+{
+  metro:{... info from db},
+  tweets:[{},{},...],
+  weather:{...},
+  sentiments:{}
+
+}
+
+
+/////// async each
+
+var searchTerms['cats','dogs','corndogs'];
+
+var outData=[];
+
+//async.eachSeries
+//async.eachLimit(searchTerm,2,function(item,callback))
+
+async.each(searchTerms,function(item,callback){
+
+  //do twitter search here
+  twitterapi(item,function(result){
+    outData.push(result);
+    callback();
+  })
+
+},function(err){
+
+  //called when everything is done
+  res.send(outData);
+
+})
+
+async.series([
+  function(callback){
+    //do last FM
+    callback(null,data1)
+  },
+  function(callback){
+    //do weather
+    callback(null,data2)
+  },
+  function(callback){
+    //do something else
+  },
+],function(err,result){
+  //result is [data1,data2]
+})

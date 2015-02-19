@@ -10,4 +10,10 @@ baseApp.config(['$routeProvider','$locationProvider',function($routeProvider,$lo
         templateUrl:'/views/home.html',
         controller:'HomeCtrl'
     })
+    .when('/metro/:id/show',{
+      templateUrl:'/views/metro/show.html',
+      controller:'MainMetroCtrl'
+    })
+
+
 }]);
