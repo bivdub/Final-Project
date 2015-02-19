@@ -31,7 +31,8 @@
     "sails-disk": "~0.10.0",
     "sails-mongo": "^0.10.5",
     "sentiment": "^1.0.2",
-    "twitter": "^1.2.1"
+    "twitter": "^1.2.1",
+    "weather-js": "^1.0.1"
   },
   "scripts": {
     "start": "node app.js",

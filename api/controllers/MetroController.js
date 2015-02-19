@@ -5,11 +5,12 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
- var geocoder = require('geocoder');
- var Twitter = require('twitter');
- var LastFmNode = require('lastfm').LastFmNode;
- var LastfmAPI = require('lastfmapi');
- var sentiment = require('sentiment');
+var geocoder = require('geocoder');
+var Twitter = require('twitter');
+var LastFmNode = require('lastfm').LastFmNode;
+var LastfmAPI = require('lastfmapi');
+var sentiment = require('sentiment');
+var weather = require('weather-js');
 // var nlp = require("nlp_compromise")
 
 var twits = new Twitter({
@@ -24,11 +25,11 @@ var lfm = new LastfmAPI({
   'secret' : process.env.LASTFM_SECRET,
 });
 
-var lastfm = new LastFmNode({
-  api_key: process.env.LASTFM_KEY,    // sign-up for a key at http://www.last.fm/api
-  secret: process.env.LASTFM_SECRET,
-  // useragent: 'appname/vX.X MyApp' // optional. defaults to lastfm-node.
-});
+// var lastfm = new LastFmNode({
+//   api_key: process.env.LASTFM_KEY,    // sign-up for a key at http://www.last.fm/api
+//   secret: process.env.LASTFM_SECRET,
+//   // useragent: 'appname/vX.X MyApp' // optional. defaults to lastfm-node.
+// });
 
 // // Geocoding
 // geocoder.geocode("Atlanta, GA", function ( err, data ) {
@@ -40,6 +41,7 @@ module.exports = {
   getInfo: function(req, res) {
     var cityId = req.params.id;
     var cityName = '';
+    var cityCountry = '';
     var searchTerms = ['I feel', 'feeling'];
     var lat ='';
     var lng ='';
@@ -51,6 +53,7 @@ module.exports = {
       Metro.find({where:{'id': cityId}}).then(function(data){
         // console.log(data[0].name);
         cityName = data[0].name;
+        cityCountry = data[0].country;
         // return data;
         callback(null, data);
       });
@@ -72,7 +75,7 @@ module.exports = {
       async.each(searchTerms,function(item, callback) {
         var geocode = lat+','+lng+',100mi';
         // console.log(geocode)
-        twits.get('search/tweets', {q: item, lang: 'en', geocode:geocode, count: 10}, function(error, data, response) {
+        twits.get('search/tweets', {q: item, lang: 'en', geocode:geocode, count: 100}, function(error, data, response) {
           // console.log(geocode);
           // console.log(response);
           // console.log(error);
@@ -134,8 +137,26 @@ module.exports = {
 
     }
 
+    var getLFMdata = function(callback) {
+      lfm.geo.getMetroTrackChart({metro: cityName, country: cityCountry, limit:10}, function(err, tracks){
+        console.log(tracks);
+        var output = tracks.track.map(function(el) {
+          return {trackName: el.name, artistName: el.artist.name}
+        })
+        callback(null, output);
+      })
+    }
 
-    async.series([findMetro,getGeocode,getTwitterData,sentimentAnalysis],
+    var getWeather = function(callback) {
+      weather.find({search: cityName, degreeType: 'F'}, function(err, result) {
+        if(err) console.log(err);
+        console.log(JSON.stringify(result, null, 2));
+
+        callback(null, result[0].current)
+      });
+    }
+
+    async.series([findMetro,getGeocode,getTwitterData,sentimentAnalysis,getLFMdata,getWeather],
       function(err,results) {
         // console.log('Errors',err);
         // console.log('Results',results);
