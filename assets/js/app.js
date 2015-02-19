@@ -1,4 +1,4 @@
-var baseApp = angular.module('BaseApp',['ui.bootstrap','ngRoute']);
+var baseApp = angular.module('BaseApp',['ui.bootstrap','ngRoute', 'nvd3ChartDirectives']);
 
 baseApp.config(['$routeProvider','$locationProvider',function($routeProvider,$locationProvider){
 
@@ -9,5 +9,9 @@ baseApp.config(['$routeProvider','$locationProvider',function($routeProvider,$lo
     .when('/',{
         templateUrl:'/views/home.html',
         controller:'HomeCtrl'
+    })
+    .when('/graph',{
+        templateUrl: '/views/graph.html',
+        controller: 'GraphCtrl'
     })
 }]);
