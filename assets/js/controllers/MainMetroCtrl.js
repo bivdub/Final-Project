@@ -8,6 +8,14 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
   $http.get('/metro/'+$scope.cityId+'/getInfo')
   .success(function(data) {
     console.log(data);
+    $scope.data = data;
+    $scope.dbInfo = data[0];
+    $scope.locationInfo = data[1];
+    $scope.scoreArray = data[3].scores;
+    $scope.positiveArray = data[3].positiveArray;
+    $scope.negativeArray = data[3].negativeArray;
+    $scope.positiveCount = data[3].positiveCount;
+    $scope.negativeCount = data[3].negativeCount;
   }).error(function(err) {
     console.log(err);
   })

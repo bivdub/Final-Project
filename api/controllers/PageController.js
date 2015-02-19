@@ -8,29 +8,6 @@
 // dotenv.load();
 
 // var moby = require('moby');
-var Twitter = require('twitter');
-var LastFmNode = require('lastfm').LastFmNode;
-var LastfmAPI = require('lastfmapi');
-var sentiment = require('sentiment');
-// var nlp = require("nlp_compromise")
-
-var twits = new Twitter({
-  consumer_key: process.env.CONSUMER_KEY,
-  consumer_secret: process.env.CONSUMER_SECRET,
-  access_token_key: process.env.ACCESS_TOKEN_KEY,
-  access_token_secret: process.env.ACCESS_TOKEN_SECRET
-});
-
-var lfm = new LastfmAPI({
-    'api_key' : process.env.LASTFM_KEY,
-    'secret' : process.env.LASTFM_SECRET,
-});
-
-var lastfm = new LastFmNode({
-  api_key: process.env.LASTFM_KEY,    // sign-up for a key at http://www.last.fm/api
-  secret: process.env.LASTFM_SECRET,
-  // useragent: 'appname/vX.X MyApp' // optional. defaults to lastfm-node.
-});
 
 // twits.stream('statuses/filter', {track: 'javascript'}, function(stream) {
 //   stream.on('data', function(tweet) {
