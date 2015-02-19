@@ -34,13 +34,14 @@ module.exports.routes = {
 
   '/': "PageController.index",
 
+  '/metro/:id/getInfo': "MetroController.getInfo",
+
   "get *":{
     controller:"PageController",
     action:"index",
     skipAssets: true,
     skipRegex: /^\/api\/.*$/
-  }
-
+  },
 
   /***************************************************************************
   *                                                                          *
