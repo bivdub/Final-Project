@@ -18,5 +18,9 @@ baseApp.config(['$routeProvider','$locationProvider',function($routeProvider,$lo
       templateUrl:'/views/metro/show.html',
       controller:'MainMetroCtrl'
     })
+    .when('/metro/:id/graph',{
+      templateUrl:'/views/graph.html',
+      controller:'GraphCtrl'
+    })
 
 }]);
