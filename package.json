@@ -26,6 +26,7 @@
     "lastfmapi": "0.0.5",
     "moby": "^1.1.1",
     "nlp_compromise": "^0.3.1",
+    "nvd3": "^1.1.15-beta2",
     "rc": "~0.5.0",
     "sails": "~0.10.5",
     "sails-disk": "~0.10.0",

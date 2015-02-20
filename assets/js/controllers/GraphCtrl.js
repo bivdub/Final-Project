@@ -43,7 +43,7 @@ baseApp.controller('GraphCtrl', ['$scope','$http', '$location', function($scope,
 
     $scope.showGraph = function(id){
        return $scope.sentiments[id];
-          }
+    }
 
 
 }]);

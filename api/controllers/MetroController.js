@@ -38,11 +38,6 @@ var lfm = new LastfmAPI({
 //   // useragent: 'appname/vX.X MyApp' // optional. defaults to lastfm-node.
 // });
 
-// // Geocoding
-// geocoder.geocode("Atlanta, GA", function ( err, data ) {
-//   // do something with data
-// });
-
 module.exports = {
 
   getInfo: function(req, res) {

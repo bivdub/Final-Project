@@ -1,4 +1,6 @@
-<h1>SHOW PAGE</h1>
+
+
+<!-- <h1>SHOW PAGE</h1>
 <div>dbInfo: {{dbInfo}}</div>
 <hr>
 <div>locationInfo: {{locationInfo}}</div>
@@ -15,4 +17,19 @@
 <hr>
 <div>Tracks: {{metroTracks}}</div>
 <hr>
-<div>weather: {{metroWeather}}</div>
+<div>weather: {{metroWeather}}</div> -->
+{{scope.exampleData}}
+<div>
+  <nvd3-scatter-chart
+    data="exampleData"
+    id="exampleId"
+    width="550"
+    height="400"
+    tooltips="false"
+    interactive="true"
+    margin="{left:-1,right:0,top:0,bottom:0}"
+    callback="chartLoaded"
+    >
+    <svg></svg>
+  </nvd3-scatter-chart>
+</div>
