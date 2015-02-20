@@ -11,6 +11,13 @@ var LastFmNode = require('lastfm').LastFmNode;
 var LastfmAPI = require('lastfmapi');
 var sentiment = require('sentiment');
 var weather = require('weather-js');
+var fs = require('fs');
+var sentimentScores = {};
+
+fs.readFile('./node_modules/sentiment/build/AFINN.json', function (err, data) {
+  if (err) throw err;
+  sentimentScores = JSON.parse(data);
+});
 // var nlp = require("nlp_compromise")
 
 var twits = new Twitter({
@@ -47,7 +54,7 @@ module.exports = {
     var lng ='';
     var outData = [];
     var toReturn = [];
-
+    // console.log(sentimentScores)
     var findMetro = function(callback) {
       // console.log(cityId)
       Metro.find({where:{'id': cityId}}).then(function(data){
@@ -116,11 +123,26 @@ module.exports = {
       })
 
       var createSort = function(arr) {
+        // console.log(sentimentScores)
         var returnObj = {};
         for(var i = 0; i< arr.length; i++) {
-          var num = arr[i];
-          returnObj[num] = returnObj[num] ? returnObj[num]+1 : 1;
+          var word = arr[i];
+          var numScore = sentimentScores[word]
+          // console.log(numScore);
+
+          if (returnObj[numScore]) {
+            if (returnObj[numScore][word]) {
+              returnObj[numScore][word]++;
+            } else {
+              returnObj[numScore][word] = 1
+            }
+          } else {
+            returnObj[numScore] = {};
+            returnObj[numScore][word] = 1
+          }
         }
+
+        console.log(returnObj);
         return returnObj;
       }
 
@@ -129,8 +151,10 @@ module.exports = {
 
       _.remove(positiveArray, function(n) { return n === 'feeling'; });
 
-      posCount = createSort(positiveArray);
-      negCount = createSort(negativeArray);
+      var posCount = createSort(positiveArray);
+      var negCount = createSort(negativeArray);
+      _.sortBy(posCount, _.values(posCount));
+      _.sortBy(negCount, _.values(negCount));
 
       // console.log(posCount);
       callback(null, {scores: scores, positiveArray: positiveArray, negativeArray: negativeArray, positiveCount: posCount, negativeCount: negCount});
@@ -139,7 +163,7 @@ module.exports = {
 
     var getLFMdata = function(callback) {
       lfm.geo.getMetroTrackChart({metro: cityName, country: cityCountry, limit:10}, function(err, tracks){
-        console.log(tracks);
+        // console.log(tracks);
         var output = tracks.track.map(function(el) {
           return {trackName: el.name, artistName: el.artist.name}
         })
@@ -150,7 +174,7 @@ module.exports = {
     var getWeather = function(callback) {
       weather.find({search: cityName, degreeType: 'F'}, function(err, result) {
         if(err) console.log(err);
-        console.log(JSON.stringify(result, null, 2));
+        // console.log(JSON.stringify(result, null, 2));
 
         callback(null, result[0].current)
       });
