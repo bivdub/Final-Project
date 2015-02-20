@@ -16,6 +16,8 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
     $scope.negativeArray = data[3].negativeArray;
     $scope.positiveCount = data[3].positiveCount;
     $scope.negativeCount = data[3].negativeCount;
+    $scope.metroTracks = data[4];
+    $scope.metroWeather = data[5];
   }).error(function(err) {
     console.log(err);
   })

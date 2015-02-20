@@ -22,6 +22,7 @@ baseApp.controller('HomeCtrl', ['$scope','$http', '$location',  function($scope,
     // console.log(err);
   });
 
+
   $scope.redirect = function(){
 
   }
