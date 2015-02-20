@@ -1,7 +1,11 @@
-.nvg .nv-axis line {
-    fill: none;
-    stroke: none;
+
+.nvd3 .nv-axis line {
+  fill: none;
+  stroke: none;
+ /* shape-rendering: crispEdges;*/
 }
-body{
+
+body {
     background-color: #000;
 }
+

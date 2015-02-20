@@ -1,4 +1,4 @@
-baseApp.controller('HomeCtrl', ['$scope','$http', '$location', function($scope,$http,$location){
+baseApp.controller('HomeCtrl', ['$scope','$http', '$location',  function($scope,$http,$location){
 
   $scope.metros = {};
   $scope.metroId = '';
@@ -21,5 +21,11 @@ baseApp.controller('HomeCtrl', ['$scope','$http', '$location', function($scope,$
   }).error(function(err){
     // console.log(err);
   });
+
+
+  $scope.redirect = function(){
+
+  }
+
 
 }]);
