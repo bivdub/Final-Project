@@ -15,6 +15,9 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
     });
   }, false);
 
+  // var myFlower = new CodeFlower("#visualization", 300, 200);
+
+
 
   var createData = function(pArray, nArray) {
     // console.log(pArray);
@@ -70,7 +73,10 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
     $scope.metroTracks = data[4];
     $scope.metroWeather = data[5];
     $scope.exampleData = createData($scope.positiveCount,$scope.negativeCount);
+
     //elementMouseover.tooltip.directive elementMouseout.tooltip.directive
+
+    // myFlower.update(JSON.stringify($scope.exampleData))
 
     console.log($scope.exampleData)
   }).error(function(err) {
