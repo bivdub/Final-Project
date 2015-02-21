@@ -33,11 +33,11 @@ var lfm = new LastfmAPI({
   'secret' : process.env.LASTFM_SECRET,
 });
 
-// var lastfm = new LastFmNode({
-//   api_key: process.env.LASTFM_KEY,    // sign-up for a key at http://www.last.fm/api
-//   secret: process.env.LASTFM_SECRET,
-//   // useragent: 'appname/vX.X MyApp' // optional. defaults to lastfm-node.
-// });
+var lastfm = new LastFmNode({
+  api_key: process.env.LASTFM_KEY,    // sign-up for a key at http://www.last.fm/api
+  secret: process.env.LASTFM_SECRET,
+  // useragent: 'appname/vX.X MyApp' // optional. defaults to lastfm-node.
+});
 
 module.exports = {
 

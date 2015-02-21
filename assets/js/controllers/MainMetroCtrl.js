@@ -15,7 +15,7 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
     });
   }, false);
 
-  // var myFlower = new CodeFlower("#visualization", 300, 200);
+
 
 
 
@@ -81,9 +81,6 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
     $scope.metroWeather = data[5];
     $scope.exampleData = createData($scope.positiveCount,$scope.negativeCount);
 
-    //elementMouseover.tooltip.directive elementMouseout.tooltip.directive
-
-    // myFlower.update(JSON.stringify($scope.exampleData))
 
     console.log($scope.exampleData)
   }).error(function(err) {
@@ -109,6 +106,5 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
     },200);
   });
 
- // [ "#ff0000", "#ff0066", "#ff0033", "#ff0000", "#ff3300", "#ff6600" ]
 
 }])
