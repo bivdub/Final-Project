@@ -9,3 +9,9 @@ body {
     background-color: #000;
 }
 
+.graph-tooltip{
+    z-index:999;
+    font-size: 40px;
+    color:white;
+    position: absolute;
+}

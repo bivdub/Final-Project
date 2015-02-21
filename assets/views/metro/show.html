@@ -18,8 +18,11 @@
 <div>Tracks: {{metroTracks}}</div>
 <hr>
 <div>weather: {{metroWeather}}</div> -->
-{{scope.exampleData}}
+<div ng-if="currentWord" class="graph-tooltip" ng-style="{'left':mouse.x+'px','top':mouse.y+'px'}">
+    {{currentWord}}
+</div>
 <div>
+
   <nvd3-scatter-chart
     data="exampleData"
     id="exampleId"
@@ -27,7 +30,7 @@
     height="400"
     tooltips="false"
     interactive="true"
-    margin="{left:-1,right:0,top:0,bottom:0}"
+
     callback="chartLoaded"
     >
     <svg></svg>

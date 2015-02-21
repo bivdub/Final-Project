@@ -12,6 +12,7 @@ var LastfmAPI = require('lastfmapi');
 var sentiment = require('sentiment');
 var weather = require('weather-js');
 var fs = require('fs');
+var tinycolor = require("tinycolor2");
 var sentimentScores = {};
 
 fs.readFile('./node_modules/sentiment/build/AFINN.json', function (err, data) {

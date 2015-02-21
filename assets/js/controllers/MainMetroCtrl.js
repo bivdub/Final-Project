@@ -1,9 +1,19 @@
-baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParams', function($scope,$http,$location,$routeParams){
+baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParams','$timeout', function($scope,$http,$location,$routeParams,$timeout){
 
   $scope.cityId = $routeParams.id;
   $scope.sentimentScoreArray = '';
   $scope.positiveWords = '';
   $scope.exampleData = [];
+  $scope.currentWord="";
+
+  $scope.mouse = {x: 0, y: 0};
+
+  document.addEventListener('mousemove', function(e){
+    $scope.$evalAsync(function(){
+      $scope.mouse.x = (e.clientX || e.pageX)+window.scrollX;
+      $scope.mouse.y = (e.clientY || e.pageY)+window.scrollY;
+    });
+  }, false);
 
 
   var createData = function(pArray, nArray) {
@@ -21,7 +31,7 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
         // console.log(item);
         // console.log(pArray[key][item])
         // console.log(pArray[key][score])
-        data[i].values.push({x:Math.random(), y:Math.random(), color:'rgb(255,0,0)', size:(pArray[key][item])*200});
+        data[i].values.push({word:item,x:Math.random(), y:Math.random(), color:'rgb(255,0,0)', size:(pArray[key][item])*200});
       }
       i++;
       console.log(data);
@@ -37,7 +47,7 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
         // console.log(item);
         // console.log(pArray[key][item])
         // console.log(pArray[key][score])
-        data[i].values.push({x:Math.random(), y:Math.random(), color:'rgb(0,0,255)', size:(nArray[key][item])*200});
+        data[i].values.push({word:item,x:Math.random(), y:Math.random(), color:'rgb(0,0,255)', size:(nArray[key][item])*200});
       }
       i++;
       console.log(data);
@@ -60,11 +70,30 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
     $scope.metroTracks = data[4];
     $scope.metroWeather = data[5];
     $scope.exampleData = createData($scope.positiveCount,$scope.negativeCount);
+    //elementMouseover.tooltip.directive elementMouseout.tooltip.directive
+
     console.log($scope.exampleData)
   }).error(function(err) {
     console.log(err);
   })
 
 
+  var tooltipShowing=false;
+
+  $scope.$on('elementMouseover.tooltip.directive',function(event,data){
+    // console.log(event,data)
+    $scope.$evalAsync(function(){
+      tooltipShowing=true;
+      $scope.currentWord = data.point.word;
+    })
+
+  });
+  $scope.$on('elementMouseout.tooltip.directive',function(event,data){
+    tooltipShowing=false;
+    $timeout(function(){
+      if(tooltipShowing) return;
+      $scope.currentWord = '';
+    },200);
+  });
 
 }])
