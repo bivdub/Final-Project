@@ -15,8 +15,12 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
     });
   }, false);
 
-
   var createData = function(pArray, nArray) {
+    // console.log(pArray);
+    // console.log(nArray);
+  var color = tinycolor("#0186ef");
+
+  var ncolor = tinycolor("#fe0072");
     var data = [];
     var i = 0;
     for (var key in pArray) {
@@ -28,7 +32,8 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
         // console.log(item);
         // console.log(pArray[key][item])
         // console.log(pArray[key][score])
-        data[i].values.push({word:item,x:Math.random(), y:Math.random(), color:'rgb(255,0,0)', size:(pArray[key][item])*200});
+
+        data[i].values.push({word:item,x:Math.random(), y:Math.random(), color: color, size:(pArray[key][item])*400});
       }
       i++;
     }
@@ -42,7 +47,7 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
         // console.log(item);
         // console.log(pArray[key][item])
         // console.log(pArray[key][score])
-        data[i].values.push({word:item,x:Math.random(), y:Math.random(), color:'rgb(0,0,255)', size:(nArray[key][item])*200});
+        data[i].values.push({word:item,x:Math.random(), y:Math.random(), color: ncolor, size:(nArray[key][item])*400});
       }
       i++;
     }
@@ -86,5 +91,6 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
       $scope.currentWord = '';
     },200);
   });
+
 
 }])

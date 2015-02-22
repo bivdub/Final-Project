@@ -1,19 +1,23 @@
 <div ng-if="currentWord" class="graph-tooltip" ng-style="{'left':mouse.x+'px','top':mouse.y+'px'}">
     {{currentWord}}
 </div>
-<div>
+<div class="row">
+    <div class="col-md-12 col-xs-12">
+    <div class="board">
 
-  <nvd3-scatter-chart
-    data="exampleData"
-    id="exampleId"
-    width="550"
-    height="400"
-    tooltips="false"
-    interactive="true"
+      <nvd3-scatter-chart
+        data="exampleData"
+        id="exampleId"
+        width="550"
+        height="400"
+        tooltips="false"
+        interactive="true"
 
-    callback="chartLoaded"
-    >
-    <svg></svg>
-  </nvd3-scatter-chart>
+        callback="chartLoaded"
+        >
+        <svg></svg>
+      </nvd3-scatter-chart>
+    </div>
+    </div>
 </div>
 

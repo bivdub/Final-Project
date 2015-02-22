@@ -6,7 +6,7 @@ baseApp.controller('MetroWeatherCtrl', ['$scope', '$http', '$routeParams', funct
   function draw(words) {
     d3.select("#vis").append("svg")
       .append("g")
-        .attr("transform", "translate(800,900)")
+        .attr("transform", "translate('top','center')")
       .selectAll("text")
         .data(words)
       .enter().append("text")
