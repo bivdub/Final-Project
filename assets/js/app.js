@@ -19,7 +19,7 @@ baseApp.config(['$routeProvider','$locationProvider',function($routeProvider,$lo
       controller:'MainMetroCtrl'
     })
     .when('/metro/:id/music',{
-      templateUrl:'/views/metro/graph.html',
+      templateUrl:'/views/metro/music.html',
       controller:'MetroMusicCtrl'
     })
     .when('/metro/:id/weather',{

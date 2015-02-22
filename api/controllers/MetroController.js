@@ -5,16 +5,17 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-var geocoder = require('geocoder');
-var Twitter = require('twitter');
-var LastFmNode = require('lastfm').LastFmNode;
-var LastfmAPI = require('lastfmapi');
-var sentiment = require('sentiment');
-var weather = require('weather-js');
-var fs = require('fs');
-var sentimentScores = {};
+ var geocoder = require('geocoder');
+ var Twitter = require('twitter');
+ var LastFmNode = require('lastfm').LastFmNode;
+ var LastfmAPI = require('lastfmapi');
+ var sentiment = require('sentiment');
+ var weather = require('weather-js');
+ var fs = require('fs');
+ var sentimentScores = {};
+ var tinycolor = require('tinycolor2')
 
-fs.readFile('./node_modules/sentiment/build/AFINN.json', function (err, data) {
+ fs.readFile('./node_modules/sentiment/build/AFINN.json', function (err, data) {
   if (err) throw err;
   sentimentScores = JSON.parse(data);
 });
@@ -32,15 +33,10 @@ var lfm = new LastfmAPI({
   'secret' : process.env.LASTFM_SECRET,
 });
 
-// var lastfm = new LastFmNode({
-//   api_key: process.env.LASTFM_KEY,    // sign-up for a key at http://www.last.fm/api
-//   secret: process.env.LASTFM_SECRET,
-//   // useragent: 'appname/vX.X MyApp' // optional. defaults to lastfm-node.
-// });
 
 module.exports = {
 
-  getInfo: function(req, res) {
+  getBasicInfo: function(req, res) {
     var cityId = req.params.id;
     var cityName = '';
     var cityCountry = '';
@@ -49,7 +45,7 @@ module.exports = {
     var lng ='';
     var outData = [];
     var toReturn = [];
-    // console.log(sentimentScores)
+
     var findMetro = function(callback) {
       // console.log(cityId)
       Metro.find({where:{'id': cityId}}).then(function(data){
@@ -63,7 +59,7 @@ module.exports = {
 
     var getGeocode = function(callback) {
         // console.log('TEST', cityName);
-      geocoder.geocode(cityName, function(err, data) {
+        geocoder.geocode(cityName, function(err, data) {
         // console.log(err);
         // console.log(data);
         lat = data.results[0].geometry.location.lat;
@@ -71,11 +67,11 @@ module.exports = {
         // return [lat,lng];
         callback(null, data);
       });
-    }
+      }
 
-    var getTwitterData = function(callback){
-      async.each(searchTerms,function(item, callback) {
-        var geocode = lat+','+lng+',100mi';
+      var getTwitterData = function(callback){
+        async.each(searchTerms,function(item, callback) {
+          var geocode = lat+','+lng+',100mi';
         // console.log(geocode)
         twits.get('search/tweets', {q: item, lang: 'en', geocode:geocode, count: 100}, function(error, data, response) {
           // console.log(geocode);
@@ -95,29 +91,29 @@ module.exports = {
         // console.log(err);
         callback(null);
       });
-    }
+      }
 
-    var sentimentAnalysis = function(callback){
-      tempArray = _.flatten(outData);
-      scores = [];
-      positiveArray = [];
-      negativeArray = [];
+      var sentimentAnalysis = function(callback){
+        tempArray = _.flatten(outData);
+        scores = [];
+        positiveArray = [];
+        negativeArray = [];
 
-      var sent = tempArray.map(function(tweet){
-        return sentiment(tweet);
-      });
+        var sent = tempArray.map(function(tweet){
+          return sentiment(tweet);
+        });
 
-      sent.forEach(function(el){
-        scores.push(el.score);
-        if(el.positive.length > 0){
-          positiveArray.push(el.positive);
-        }
-        if(el.negative.length > 0){
-          negativeArray.push(el.negative);
-        }
-      })
+        sent.forEach(function(el){
+          scores.push(el.score);
+          if(el.positive.length > 0){
+            positiveArray.push(el.positive);
+          }
+          if(el.negative.length > 0){
+            negativeArray.push(el.negative);
+          }
+        })
 
-      var createSort = function(arr) {
+        var createSort = function(arr) {
         // console.log(sentimentScores)
         var returnObj = {};
         for(var i = 0; i< arr.length; i++) {
@@ -137,31 +133,30 @@ module.exports = {
           }
         }
 
-        console.log(returnObj);
+        // console.log(returnObj);
         return returnObj;
       }
 
       positiveArray = _.flatten(positiveArray);
       negativeArray = _.flatten(negativeArray);
 
-      _.remove(positiveArray, function(n) { return n === 'feeling'; });
+      _.remove(positiveArray, function(n) { return n === 'feeling' || n === 'like'; });
 
       var posCount = createSort(positiveArray);
       var negCount = createSort(negativeArray);
       _.sortBy(posCount, _.values(posCount));
       _.sortBy(negCount, _.values(negCount));
-
-      // console.log(posCount);
       callback(null, {scores: scores, positiveArray: positiveArray, negativeArray: negativeArray, positiveCount: posCount, negativeCount: negCount});
-
     }
 
     var getLFMdata = function(callback) {
       lfm.geo.getMetroTrackChart({metro: cityName, country: cityCountry, limit:10}, function(err, tracks){
-        // console.log(tracks);
-        var output = tracks.track.map(function(el) {
-          return {trackName: el.name, artistName: el.artist.name}
-        })
+        console.log(tracks);
+        if(tracks.track) {
+          var output = tracks.track.map(function(el) {
+            return {trackName: el.name, artistName: el.artist.name}
+          })
+        }
         callback(null, output);
       })
     }
@@ -177,14 +172,272 @@ module.exports = {
 
     async.series([findMetro,getGeocode,getTwitterData,sentimentAnalysis,getLFMdata,getWeather],
       function(err,results) {
-        // console.log('Errors',err);
-        // console.log('Results',results);
-        // console.log(outData);
         toReturn.push(results);
         res.send(results);
+    });
+
+  },
+
+  getWeatherInfo: function(req,res) {
+
+    var cityId = req.params.id;
+    var cityName = '';
+    var cityCountry = '';
+    var searchTerms = ['weather'];
+    var lat ='';
+    var lng ='';
+    var outData = [];
+    var toReturn = [];
+
+    var findMetro = function(callback) {
+      // console.log(cityId)
+      Metro.find({where:{'id': cityId}}).then(function(data){
+        // console.log(data[0].name);
+        cityName = data[0].name;
+        cityCountry = data[0].country;
+        // return data;
+        callback(null, data);
+      });
+    }
+
+    var getGeocode = function(callback) {
+        // console.log('TEST', cityName);
+        geocoder.geocode(cityName, function(err, data) {
+        // console.log(err);
+        // console.log(data);
+        lat = data.results[0].geometry.location.lat;
+        lng = data.results[0].geometry.location.lng;
+        // return [lat,lng];
+        callback(null, data);
+      });
+    }
+
+    var getWeather = function(callback) {
+      weather.find({search: cityName, degreeType: 'F'}, function(err, result) {
+        if(err) console.log(err);
+        // console.log(result);
+        // console.log(JSON.stringify(result, null, 2));
+        searchTerms.push(result[0].current.skycode)
+        callback(null, result[0].current)
+      });
+    }
+
+    var getTwitterData = function(callback){
+      async.each(searchTerms,function(item, callback) {
+        var geocode = lat+','+lng+',100mi';
+        twits.get('search/tweets', {q: item, lang: 'en', geocode:geocode, count: 100}, function(error, data, response) {
+          if (error) throw error;
+          var tweetResults = data.statuses.map(function(tweet) {
+            return tweet.text.split(' ').map(function(word){
+              return word.replace('@','').replace('#','').replace('...', '').replace('.', '').replace(',', '').replace('…', '').replace('RT', '').replace(/[^A-Za-z]/g, "");
+            }).filter(function(word){return word.length > 3});;
+        })
+        outData.push(_.uniq(_.flatten(tweetResults)));
+        callback(null, _.uniq(tweetResults));
+      })
+    },function(err){
+        // console.log(err);
+        callback(null);
+      });
+    }
+
+    var sentimentAnalysisWeather = function(callback){
+      tempArray = _.flatten(outData);
+      scores = [];
+      positiveArray = [];
+      negativeArray = [];
+
+      var sent = tempArray.map(function(tweet){
+        return sentiment(tweet);
       });
 
-  }
+      sent.forEach(function(el){
+        scores.push(el.score);
+        if(el.positive.length > 0){
+          positiveArray.push(el.positive);
+        }
+        if(el.negative.length > 0){
+          negativeArray.push(el.negative);
+        }
+      })
+
+      positiveArray = _.flatten(positiveArray);
+      negativeArray = _.flatten(negativeArray);
+
+      _.remove(positiveArray, function(n) { return n === 'feeling' || n === 'like'; });
+
+      outData = positiveArray.concat(negativeArray);
+
+      callback(null, {scores: scores, positiveArray: positiveArray, negativeArray: negativeArray});
+    }
+
+    async.series([findMetro,getGeocode,getWeather,getTwitterData,sentimentAnalysisWeather],
+      function(err,results) {
+        toReturn.push(results);
+        res.send(outData);
+    });
+
+  },
+
+  //GETMUSIC PATH
+
+  getMusicInfo: function(req, res) {
+
+    var cityId = req.params.id;
+    var cityName = '';
+    var cityCountry = '';
+    var searchTerms = [];
+    var lat ='';
+    var lng ='';
+    var outData = [];
+    var toReturn = [];
+    var outputJSON = {};
+
+    var sentimentAnalysis = function(callback){
+        tempArray = _.flatten(outData);
+        scores = [];
+        positiveArray = [];
+        negativeArray = [];
+
+        var sent = tempArray.map(function(tweet){
+          return sentiment(tweet);
+        });
+
+        sent.forEach(function(el){
+          scores.push(el.score);
+          if(el.positive.length > 0){
+            positiveArray.push(el.positive);
+          }
+          if(el.negative.length > 0){
+            negativeArray.push(el.negative);
+          }
+        })
+
+        // var createSort = function(arr) {
+        // // console.log(sentimentScores)
+        // var returnObj = {};
+        // for(var i = 0; i< arr.length; i++) {
+        //   var word = arr[i];
+        //   var numScore = sentimentScores[word]
+        //   // console.log(numScore);
+
+        //   if (returnObj[numScore]) {
+        //     if (returnObj[numScore][word]) {
+        //       returnObj[numScore][word]++;
+        //     } else {
+        //       returnObj[numScore][word] = 1
+        //     }
+        //   } else {
+        //     returnObj[numScore] = {};
+        //     returnObj[numScore][word] = 1
+        //   }
+        // }
+
+        // console.log(returnObj);
+      //   return returnObj;
+      // }
+
+      positiveArray = _.flatten(positiveArray);
+      negativeArray = _.flatten(negativeArray);
+
+      _.remove(positiveArray, function(n) { return n === 'feeling' || n === 'like'; });
+
+      var posCount = createSort(positiveArray);
+      var negCount = createSort(negativeArray);
+      _.sortBy(posCount, _.values(posCount));
+      _.sortBy(negCount, _.values(negCount));
+      callback(null, {scores: scores, positiveArray: positiveArray, negativeArray: negativeArray, positiveCount: posCount, negativeCount: negCount});
+    }
+
+    var createJSONdata = function(callback) {
+      var globalCount = 0;
+      var pCount = 0;
+      var nCount = 0;
+
+      outputJSON.name = cityName;
+      outputJSON.children = [];
+
+      console.log(outData.length)
+
+      for (var i = 0; i <searchTerms.length; i++) {
+        var aCount = 0;
+        outputJSON.children
+        .push({name: searchTerms[i],
+               children: [{name: 'positive', children: []},
+                          {name: 'negative', children: []}]
+              });
+
+      }
+      console.log(outputJSON);
+    }
+
+    var getLFMdata = function(callback) {
+      lfm.geo.getMetroArtistChart({metro: cityName, country: cityCountry, limit:10}, function(err, artists){
+        console.log(artists);
+        if(artists.artist) {
+          var output = artists.artist.map(function(el) {
+            return el.name;
+          })
+        }
+        console.log(output);
+        searchTerms = output;
+        console.log(searchTerms);
+        callback(null, output);
+      })
+    }
+
+    var findMetro = function(callback) {
+      // console.log(cityId)
+      Metro.find({where:{'id': cityId}}).then(function(data){
+        console.log(data);
+        cityName = data[0].name;
+        cityCountry = data[0].country;
+        // return data;
+        callback(null, data);
+      });
+    }
+
+    var getGeocode = function(callback) {
+        // console.log('TEST', cityName);
+        geocoder.geocode(cityName, function(err, data) {
+        // console.log(err);
+        // console.log(data);
+        lat = data.results[0].geometry.location.lat;
+        lng = data.results[0].geometry.location.lng;
+        // return [lat,lng];
+        callback(null, data);
+      });
+    }
+
+
+  var getTwitterData = function(callback){
+      async.each(searchTerms,function(item, callback) {
+        var geocode = lat+','+lng+',100mi';
+        twits.get('search/tweets', {q: item, lang: 'en', geocode:geocode, count: 100}, function(error, data, response) {
+          if (error) throw error;
+          var tweetResults = data.statuses.map(function(tweet) {
+            return tweet.text.split(' ').map(function(word){
+              return word.replace('@','').replace('#','').replace('...', '').replace('.', '').replace(',', '').replace('…', '').replace('RT', '').replace(/[^A-Za-z]/g, "");
+            });
+        })
+        outData.push(_.flatten(tweetResults));
+        callback(null, _.uniq(tweetResults));
+      })
+    },function(err){
+        // console.log(err);
+        callback(null);
+      });
+    }
+
+
+    async.series([findMetro,getGeocode,getLFMdata,getTwitterData, createJSONdata],
+      function(err,results) {
+        // console.log(outData);
+        toReturn.push(results);
+        res.send(outData);
+    });
+
+  },
 
 };
 

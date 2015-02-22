@@ -5,53 +5,37 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
   $scope.positiveWords = '';
   $scope.exampleData = [];
 
-  // var myFlower = new CodeFlower("#visualization", 300, 200);
-
-
 
   var createData = function(pArray, nArray) {
-    // console.log(pArray);
-    // console.log(nArray);
     var data = [];
     var i = 0;
     for (var key in pArray) {
-      // console.log(key);
       data.push({
         key: key,
         values: []
       });
       for (var item in pArray[key]) {
-        // console.log(item);
-        // console.log(pArray[key][item])
-        // console.log(pArray[key][score])
         data[i].values.push({x:Math.random(), y:Math.random(), color:'rgb(255,0,0)', size:(pArray[key][item])*200});
       }
       i++;
-      console.log(data);
     }
 
     for (var key in nArray) {
-      // console.log(key);
       data.push({
         key: key,
         values: []
       });
       for (var item in nArray[key]) {
-        // console.log(item);
-        // console.log(pArray[key][item])
-        // console.log(pArray[key][score])
         data[i].values.push({x:Math.random(), y:Math.random(), color:'rgb(0,0,255)', size:(nArray[key][item])*200});
       }
       i++;
-      console.log(data);
     }
     return data;
 
   }
 
-  $http.get('/metro/'+$scope.cityId+'/getInfo')
+  $http.get('/metro/'+$scope.cityId+'/getBasicInfo')
   .success(function(data) {
-    // console.log(data);
     $scope.data = data;
     $scope.dbInfo = data[0];
     $scope.locationInfo = data[1];
@@ -63,12 +47,8 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
     $scope.metroTracks = data[4];
     $scope.metroWeather = data[5];
     $scope.exampleData = createData($scope.positiveCount,$scope.negativeCount);
-    // myFlower.update(JSON.stringify($scope.exampleData))
     console.log($scope.exampleData)
   }).error(function(err) {
     console.log(err);
   })
-
-
-
 }])

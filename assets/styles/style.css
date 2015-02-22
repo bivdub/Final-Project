@@ -6,6 +6,13 @@
 }
 
 body {
-    background-color: #000;
+  height:100%;
+  background-color: #000;
 }
 
+svg {
+  margin:0;
+  padding:0;
+  height: 300em;
+  width: 300em;
+}
