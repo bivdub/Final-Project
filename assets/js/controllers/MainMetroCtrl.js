@@ -22,10 +22,10 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
   var createData = function(pArray, nArray) {
     // console.log(pArray);
     // console.log(nArray);
-     var colors = tinycolor("#ec0067").analogous();
+//
+  var color = tinycolor("#0186ef");
 
-    colors.map(function(t) { return t.toHexString(); });
-
+  var ncolor = tinycolor("#fe0072");
     var data = [];
     var i = 0;
     for (var key in pArray) {
@@ -38,7 +38,8 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
         // console.log(item);
         // console.log(pArray[key][item])
         // console.log(pArray[key][score])
-        data[i].values.push({word:item,x:Math.random(), y:Math.random(), color: colors, size:(pArray[key][item])*200});
+
+        data[i].values.push({word:item,x:Math.random(), y:Math.random(), color: color, size:(pArray[key][item])*400});
       }
       i++;
       console.log(data);
@@ -46,9 +47,8 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
 
     for (var key in nArray) {
       // console.log(key);
-       var colors = tinycolor("#0186ef").analogous();
 
-    colors.map(function(t) { return t.toHexString(); });
+//
       data.push({
         key: key,
         values: []
@@ -57,7 +57,7 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
         // console.log(item);
         // console.log(pArray[key][item])
         // console.log(pArray[key][score])
-        data[i].values.push({word:item,x:Math.random(), y:Math.random(), color: colors, size:(nArray[key][item])*200});
+        data[i].values.push({word:item,x:Math.random(), y:Math.random(), color: ncolor, size:(nArray[key][item])*400});
       }
       i++;
       console.log(data);
