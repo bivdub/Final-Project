@@ -5,17 +5,18 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
- var geocoder = require('geocoder');
- var Twitter = require('twitter');
- var LastFmNode = require('lastfm').LastFmNode;
- var LastfmAPI = require('lastfmapi');
- var sentiment = require('sentiment');
- var weather = require('weather-js');
- var fs = require('fs');
- var sentimentScores = {};
- var tinycolor = require('tinycolor2')
 
- fs.readFile('./node_modules/sentiment/build/AFINN.json', function (err, data) {
+var geocoder = require('geocoder');
+var Twitter = require('twitter');
+var LastFmNode = require('lastfm').LastFmNode;
+var LastfmAPI = require('lastfmapi');
+var sentiment = require('sentiment');
+var weather = require('weather-js');
+var fs = require('fs');
+var tinycolor = require("tinycolor2");
+var sentimentScores = {};
+
+fs.readFile('./node_modules/sentiment/build/AFINN.json', function (err, data) {
   if (err) throw err;
   sentimentScores = JSON.parse(data);
 });

@@ -10,9 +10,9 @@ body {
   background-color: #000;
 }
 
-svg {
-  margin:0;
-  padding:0;
-  height: 300em;
-  width: 300em;
+.graph-tooltip{
+    z-index:999;
+    font-size: 40px;
+    color:white;
+    position: absolute;
 }
