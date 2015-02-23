@@ -2,7 +2,7 @@
 // Algorithm due to Jonathan Feinberg, http://static.mrfeinberg.com/bv_ch03.pdf
 (function() {
   function cloud() {
-    var size = [256, 256],
+    var size = [256,256],
         text = cloudText,
         font = cloudFont,
         fontSize = cloudFontSize,
@@ -16,6 +16,7 @@
         event = d3.dispatch("word", "end"),
         timer = null,
         cloud = {};
+
 
     cloud.start = function() {
       var board = zeroArray((size[0] >> 5) * size[1]),

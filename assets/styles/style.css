@@ -4,7 +4,14 @@
   stroke: none;
  /* shape-rendering: crispEdges;*/
 }
+/*
+#vis{
+    width: 100%;
+    height: 100%;
+    margin: 50px auto;
 
+}
+*/
 body {
     background-color: #000;
     font-family: 'Raleway', sans-serif;

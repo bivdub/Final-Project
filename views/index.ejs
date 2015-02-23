@@ -1,29 +1,29 @@
 <div ng-app="BaseApp">
 <nav>
-  <div class="container" ng-controller="HomeCtrl">
+  <div class="container" ng-controller="MainNavCtrl">
     <div class="row">
     <div class="col-md-6 col-xs-12">
-    <form ng-submit="redirect()" class="form-inline">
+    <form ng-submit="loadLocation()" class="form-inline">
       <div class="form-group search">
       <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
-        <input type="text" ng-model="asyncSelected" placeholder="please enter a city" typeahead="thing as thing.item for thing in getLocation($viewValue)" typeahead-loading="loadingLocations" class="form-control">
-        <a ng-href="/metro/{{asyncSelected.id}}/show" class="btn btn-primary" ng-disabled="!asyncSelected">Check it out</a>
+        <input type="text" ng-model="asyncSelected" placeholder="please enter a city" typeahead="thing as thing.name for thing in metros | filter:$viewValue | limitTo:8"  typeahead-loading="loadingLocations" class="form-control">
+        <button class="btn btn-primary" ng-disabled="!asyncSelected">Check it out</a>
 
         </div>
     </form>
     </div>
       <div class="col-md-6 col-xs-12">
         <ul class="nav nav-pills navbar-right">
-      <li role="presentation" class="active" ><a ng-href="/metro/{{asyncSelected.id}}/show">Feels</a></li>
-      <li role="presentation"><a ng-href="/metro/{{asyncSelected.id}}/music">Music</a></li>
-      <li role="presentation"><a ng-href="/metro/{{asyncSelected.id}}/weather">Weather</a></li>
+      <li role="presentation" class="active" ><a ng-href="/metro/{{selectedMetro}}/show">Feels</a></li>
+      <li role="presentation"><a ng-href="/metro/{{selectedMetro}}/music">Music</a></li>
+      <li role="presentation"><a ng-href="/metro/{{selectedMetro}}/weather">Weather</a></li>
     </ul>
     </div>
   </div>
 </div>
   </nav>
 
-  <div>
+  <div class="container">
       <ng-view></ng-view>
   </div>
 </div>

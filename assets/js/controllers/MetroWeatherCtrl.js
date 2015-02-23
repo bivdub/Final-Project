@@ -1,80 +1,99 @@
-baseApp.controller('MetroWeatherCtrl', ['$scope', '$http', '$routeParams', function($scope,$http,$routeParams){
+baseApp.controller('MetroWeatherCtrl', ['$scope', '$http', '$routeParams','$route', function($scope,$http,$routeParams,$route){
+
+  $scope.loading=true;
 
   $scope.cityId = $routeParams.id
   var fill = d3.scale.category20();
+ //   var width = 1024;
+ //  var height = 576;
 
-  function draw(words) {
+ // document.getElementById('vis', function(w, h){
+
+
+ // })
+
+function drawWordCloud(){
+
+  var width,height;
+
+
+  var draw = function(words) {
+
     d3.select("#vis").append("svg")
+    .attr("width", width)
+    .attr("height", height)
       .append("g")
-        .attr("transform", "translate('top','center')")
+        .attr("transform", "translate("+Math.floor(width/2)+","+Math.floor(height/2)+")")
       .selectAll("text")
         .data(words)
       .enter().append("text")
         .style("font-size", function(d) { return d.size + "px"; })
-        .style("font-family", "Impact")
+        .style("font-family", "Raleway")
         .style("fill", function(d, i) { return fill(i); })
         .attr("text-anchor", "middle")
         .attr("transform", function(d) {
           return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
         })
         .text(function(d) { return d.text; });
+
+        $scope.$evalAsync(function(){
+          $scope.loading=false;
+        })
+
   }
 
-  var fontSize = d3.scale.log().range([10, 100]);
+  var visObj = document.getElementById('vis')
 
-  // var layout = cloud()
-  //     .size([960, 600])
-  //     .timeInterval(10)
-  //     .text(function(d) { return d.key; })
-  //     .font("Impact")
-  //     .fontSize(function(d) { return fontSize(+d.value); })
-  //     .rotate(function(d) { return ~~(Math.random() * 5) * 30 - 60; })
-  //     .padding(1)
-  //     .on("word", progress)
-  //     .on("end", draw)
-  //     .words([…])
-  //     .start();
+
+  //determine width / height
+  width = visObj.clientWidth;
+  if(width > 900){
+    height = parseInt(width*(3/4));
+  }else{
+    height = parseInt(width*(4/3));
+  }
+
+
+
+  d3.scale.log().range([10, 100]);
+  d3.layout.cloud().size([width, height])
+      .timeInterval(10)
+      .words($scope.words)
+      .padding(1)
+      .rotate(function(d) { return ~~(Math.random() * 5) * 30 - 60; })
+      .font("Raleway")
+      .fontSize(function(d) { return d.size; })
+      .on("end", draw)
+      .start();
+
+}
+
+var resizing=0;
+
 
   $http.get('/metro/'+$scope.cityId+'/getWeatherInfo')
   .success(function(data) {
     $scope.data = data;
     $scope.weatherData = data;
-    console.log($scope.weatherData);
-    d3.layout.cloud().size([1500, 800])
-        .timeInterval(10)
-        .words($scope.weatherData.map(function(d) {
-          return {text: d, size: 10 + Math.random() * 70};
-        }))
-        .padding(1)
-        .rotate(function(d) { return ~~(Math.random() * 5) * 30 - 60; })
-        .font("Impact")
-        .fontSize(function(d) { return d.size; })
-        .on("end", draw)
-        .start();
-    // d3.layout.cloud()
-    //   .size([960, 600])
-    //   .timeInterval(10)
-    //   .text(function(d) { return d.key; })
-    //   .font("Impact")
-    //   .fontSize(function(d) { return fontSize(+d.value); })
-    //   .rotate(function(d) { return ~~(Math.random() * 5) * 30 - 60; })
-    //   .padding(1)
-    //   .on("word", progress)
-    //   .on("end", draw)
-    //   .words($scope.weatherData)
-    //   .start();
-    // $scope.dbInfo = data[0];
-    // $scope.locationInfo = data[1];
-    // $scope.scoreArray = data[3].scores;
-    // $scope.positiveArray = data[3].positiveArray;
-    // $scope.negativeArray = data[3].negativeArray;
-    // $scope.positiveCount = data[3].positiveCount;
-    // $scope.negativeCount = data[3].negativeCount;
-    // $scope.metroTracks = data[4];
-    // $scope.metroWeather = data[5];
-    // $scope.exampleData = createData($scope.positiveCount,$scope.negativeCount);
-    // console.log($scope.data)
+    $scope.words = $scope.weatherData.map(function(d) {
+      return {text: d, size: 10 + Math.random() * 70};
+    });
+    drawWordCloud();
+
+    window.addEventListener('resize',function(){
+      resizing += 1;
+      setTimeout(function(){
+        resizing -= 1;
+        if(resizing > 0) return;
+
+        $route.reload();
+      },200);
+
+    });
+
   }).error(function(err) {
-    // console.log(err);
+    console.log(err);
   })
+
+
 }])
