@@ -7,7 +7,8 @@ baseApp.controller('MetroMusicCtrl', ['$scope','$http','$routeParams','$route', 
 
   function drawFlower() {
 
-    var width, height;
+    var width;
+    var height;
    var visObj = document.getElementById('visualization')
 
     width = visObj.clientWidth;

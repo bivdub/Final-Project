@@ -2,9 +2,11 @@
     {{currentWord}}
 </div>
 <div class="row">
-    <div class="col-md-12 col-xs-12">
-    <div class="board"><br><br>
 <div ng-show="loading" style="color:white; text-align:center">Loading...</div>
+    <div class="col-md-12 col-xs-12">
+    <p class="about text-center">Bubble Chart showing the sentiments and feelings for a metro area, arranged by size for both positve and negative scores. </p>
+    <div class="board"><br><br>
+
       <nvd3-scatter-chart
         data="exampleData"
         id="exampleId"
