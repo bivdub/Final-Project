@@ -37,6 +37,7 @@ module.exports.routes = {
   '/metro/:id/getBasicInfo': "MetroController.getBasicInfo",
   '/metro/:id/getWeatherInfo': 'MetroController.getWeatherInfo',
   '/metro/:id/getMusicInfo': 'MetroController.getMusicInfo',
+  '/api/metro': 'MetroController.get',
 
   "get *":{
     controller:"PageController",

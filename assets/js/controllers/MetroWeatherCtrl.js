@@ -4,71 +4,64 @@ baseApp.controller('MetroWeatherCtrl', ['$scope', '$http', '$routeParams','$rout
 
   $scope.cityId = $routeParams.id
   var fill = d3.scale.category20();
- //   var width = 1024;
- //  var height = 576;
 
- // document.getElementById('vis', function(w, h){
+  function drawWordCloud(){
 
-
- // })
-
-function drawWordCloud(){
-
-  var width,height;
+    var width,height;
 
 
-  var draw = function(words) {
+    var draw = function(words) {
 
-    d3.select("#vis").append("svg")
-    .attr("width", width)
-    .attr("height", height)
+      d3.select("#vis").append("svg")
+      .attr("width", width)
+      .attr("height", height)
       .append("g")
-        .attr("transform", "translate("+Math.floor(width/2)+","+Math.floor(height/2)+")")
+      .attr("transform", "translate("+Math.floor(width/2)+","+Math.floor(height/2)+")")
       .selectAll("text")
-        .data(words)
+      .data(words)
       .enter().append("text")
-        .style("font-size", function(d) { return d.size + "px"; })
-        .style("font-family", "Raleway")
-        .style("fill", function(d, i) { return fill(i); })
-        .attr("text-anchor", "middle")
-        .attr("transform", function(d) {
-          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-        })
-        .text(function(d) { return d.text; });
+      .style("font-size", function(d) { return d.size + "px"; })
+      .style("font-family", "Raleway")
+      .style("fill", function(d, i) { return fill(i); })
+      .attr("text-anchor", "middle")
+      .attr("transform", function(d) {
+        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+      })
+      .text(function(d) { return d.text; });
 
-        $scope.$evalAsync(function(){
-          $scope.loading=false;
-        })
+      $scope.$evalAsync(function(){
+        $scope.loading=false;
+      })
+
+    }
+
+    var visObj = document.getElementById('vis')
+
+
+    //determine width / height
+    width = visObj.clientWidth;
+    if(width > 900){
+      height = parseInt(width*(3/4));
+    }else{
+      height = parseInt(width*(4/3));
+    }
+
+
+
+    d3.scale.log().range([10, 100]);
+    d3.layout.cloud().size([width, height])
+    .timeInterval(10)
+    .words($scope.words)
+    .padding(1)
+    .rotate(function(d) { return ~~(Math.random() * 5) * 30 - 60; })
+    .font("Raleway")
+    .fontSize(function(d) { return d.size; })
+    .on("end", draw)
+    .start();
 
   }
 
-  var visObj = document.getElementById('vis')
-
-
-  //determine width / height
-  width = visObj.clientWidth;
-  if(width > 900){
-    height = parseInt(width*(3/4));
-  }else{
-    height = parseInt(width*(4/3));
-  }
-
-
-
-  d3.scale.log().range([10, 100]);
-  d3.layout.cloud().size([width, height])
-      .timeInterval(10)
-      .words($scope.words)
-      .padding(1)
-      .rotate(function(d) { return ~~(Math.random() * 5) * 30 - 60; })
-      .font("Raleway")
-      .fontSize(function(d) { return d.size; })
-      .on("end", draw)
-      .start();
-
-}
-
-var resizing=0;
+  var resizing=0;
 
 
   $http.get('/metro/'+$scope.cityId+'/getWeatherInfo')

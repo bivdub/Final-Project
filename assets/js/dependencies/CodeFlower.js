@@ -2,22 +2,22 @@ var CodeFlower = function(selector, w, h) {
   this.w = w;
   this.h = h;
 
-  d3.select(selector).selectAll("svg").remove();
+  oldD3.select(selector).selectAll("svg").remove();
 
-  this.svg = d3.select(selector).append("svg:svg")
+  this.svg = oldD3.select(selector).append("svg:svg")
     .attr('width', w)
     .attr('height', h);
 
   this.svg.append("svg:rect")
-    .style("stroke", "#999")
-    .style("fill", "#fff")
+    .style("stroke", "#000")
+    .style("fill", "#000")
     .attr('width', w)
     .attr('height', h);
 
-  this.force = d3.layout.force()
+  this.force = oldD3.layout.force()
     .on("tick", this.tick.bind(this))
-    .charge(function(d) { return d._children ? -d.size / 100 : -40; })
-    .linkDistance(function(d) { return d.target._children ? 80 : 25; })
+    .charge(function(d) { return d._children ? -d.size / 250 : -200; })
+    .linkDistance(function(d) { return d.target._children ? 75 : 25; })
     .size([h, w]);
 };
 
@@ -29,7 +29,7 @@ CodeFlower.prototype.update = function(json) {
   this.json.y = this.h / 2;
 
   var nodes = this.flatten(this.json);
-  var links = d3.layout.tree().links(nodes);
+  var links = oldD3.layout.tree().links(nodes);
   var total = nodes.length || 1;
 
   // remove existing text (will readd it afterwards to be sure it's on top)
@@ -63,20 +63,24 @@ CodeFlower.prototype.update = function(json) {
     .classed("collapsed", function(d) { return d._children ? 1 : 0; });
 
   this.node.transition()
-    .attr("r", function(d) { return d.children ? 3.5 : Math.pow(d.size, 2/5) || 1; });
+    .attr("r", function(d) { return d.children ? 7 : Math.pow(d.size, 3/5) || 1; });
+
+
 
   // Enter any new nodes
-  this.node.enter().append('svg:circle')
+  var myNode = this.node.enter().append('svg:circle')
     .attr("class", "node")
     .classed('directory', function(d) { return (d._children || d.children) ? 1 : 0; })
-    .attr("r", function(d) { return d.children ? 3.5 : Math.pow(d.size, 2/5) || 1; })
+    .attr("r", function(d) { return d.children ? 7 : Math.pow(d.size, 3/5) || 1; })
     .style("fill", function color(d) {
       return "hsl(" + parseInt(360 / total * d.id, 10) + ",90%,70%)";
     })
-    .call(this.force.drag)
     .on("click", this.click.bind(this))
     .on("mouseover", this.mouseover.bind(this))
     .on("mouseout", this.mouseout.bind(this));
+
+    //console.log('this',this.force.drag)
+    myNode.call(this.force.drag);
 
   // Exit any old nodes
   this.node.exit().remove();

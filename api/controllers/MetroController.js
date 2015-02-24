@@ -37,6 +37,12 @@ var lfm = new LastfmAPI({
 
 module.exports = {
 
+  get: function(req, res) {
+    Metro.find().limit(999).exec(function(err, data){
+      res.send(data);
+    });
+  },
+
   getBasicInfo: function(req, res) {
     var cityId = req.params.id;
     var cityName = '';
@@ -294,8 +300,8 @@ module.exports = {
     var toReturn = [];
     var outputJSON = {};
 
-    var sentimentAnalysis = function(callback){
-        tempArray = _.flatten(outData);
+    var sentimentAnalysis = function(wordArray){
+        tempArray = _.flatten(wordArray);
         scores = [];
         positiveArray = [];
         negativeArray = [];
@@ -338,16 +344,16 @@ module.exports = {
       //   return returnObj;
       // }
 
-      positiveArray = _.flatten(positiveArray);
-      negativeArray = _.flatten(negativeArray);
+      positiveArray = _.flatten(positiveArray).sort();
+      negativeArray = _.flatten(negativeArray).sort();
+      return ({pos: positiveArray, neg: negativeArray});
+      // _.remove(positiveArray, function(n) { return n === 'feeling' || n === 'like'; });
 
-      _.remove(positiveArray, function(n) { return n === 'feeling' || n === 'like'; });
-
-      var posCount = createSort(positiveArray);
-      var negCount = createSort(negativeArray);
-      _.sortBy(posCount, _.values(posCount));
-      _.sortBy(negCount, _.values(negCount));
-      callback(null, {scores: scores, positiveArray: positiveArray, negativeArray: negativeArray, positiveCount: posCount, negativeCount: negCount});
+      // var posCount = createSort(positiveArray);
+      // var negCount = createSort(negativeArray);
+      // _.sortBy(posCount, _.values(posCount));
+      // _.sortBy(negCount, _.values(negCount));
+      // callback(null, {scores: scores, positiveArray: positiveArray, negativeArray: negativeArray, positiveCount: posCount, negativeCount: negCount});
     }
 
     var createJSONdata = function(callback) {
@@ -358,31 +364,70 @@ module.exports = {
       outputJSON.name = cityName;
       outputJSON.children = [];
 
-      console.log(outData.length)
-
       for (var i = 0; i <searchTerms.length; i++) {
         var aCount = 0;
+        // var currentArtist = searchTerms[i];
         outputJSON.children
-        .push({name: searchTerms[i],
-               children: [{name: 'positive', children: []},
-                          {name: 'negative', children: []}]
+        .push({'name': searchTerms[i],
+               children: [{'name': 'positive', 'children': []},
+                          {'name': 'negative', 'children': []}]
               });
-
+        // console.log(outData.length);
+        var sentimentObj = sentimentAnalysis(outData[i]);
+        // console.log(sentimentObj);
+        var currentCount = 1;
+        for (var j = 0; j<sentimentObj.pos.length; j++) {
+          if (sentimentObj.pos[j+1] !== sentimentObj.pos[j]) {
+            var weight = sentimentScores[sentimentObj.pos[j]];
+            console.log('weight', weight)
+            var size = (currentCount * weight * 10);
+            globalCount += size;
+            pCount += size;
+            // console.log(outputJSON.children[i]);
+            outputJSON.children[i].children[0].children.push({'name': sentimentObj.pos[j], 'size': size});
+            currentCount = 1;
+          } else {
+            currentCount++;
+          }
+        }
+        currentCount = 1;
+        for (var k = 0; k<sentimentObj.neg.length; k++) {
+          if (sentimentObj.neg[k+1] !== sentimentObj.neg[k]) {
+            var weight = Math.abs(sentimentScores[sentimentObj.neg[k]]);
+            var size = currentCount * weight * 10;
+            globalCount += size;
+            nCount += size;
+            // console.log(outputJSON.children[i]);
+            outputJSON.children[i].children[1].children.push({'name': sentimentObj.neg[k], 'size': size});
+            currentCount = 1;
+          } else {
+            currentCount++;
+          }
+        }
+        // console.log(pCount)
+        outputJSON.children[i].children[0].size = pCount > 0 ? pCount : 5;
+        outputJSON.children[i].children[1].size = nCount > 0 ? nCount : 5;
+        outputJSON.children[i].size = (pCount + nCount) > 0 ? (pCount+nCount) : 10;
+        pCount = 0;
+        nCount = 0;
+        console.log(outputJSON.children[i].children);
       }
-      console.log(outputJSON);
+      outputJSON.size = globalCount;
+      // console.log(outputJSON);
+      callback(null, outputJSON);
     }
 
     var getLFMdata = function(callback) {
       lfm.geo.getMetroArtistChart({metro: cityName, country: cityCountry, limit:10}, function(err, artists){
-        console.log(artists);
+        // console.log(artists);
         if(artists.artist) {
           var output = artists.artist.map(function(el) {
             return el.name;
           })
         }
-        console.log(output);
+        // console.log(output);
         searchTerms = output;
-        console.log(searchTerms);
+        // console.log(searchTerms);
         callback(null, output);
       })
     }
@@ -390,7 +435,7 @@ module.exports = {
     var findMetro = function(callback) {
       // console.log(cityId)
       Metro.find({where:{'id': cityId}}).then(function(data){
-        console.log(data);
+        // console.log(data);
         cityName = data[0].name;
         cityCountry = data[0].country;
         // return data;
@@ -418,11 +463,15 @@ module.exports = {
           if (error) throw error;
           var tweetResults = data.statuses.map(function(tweet) {
             return tweet.text.split(' ').map(function(word){
-              return word.replace('@','').replace('#','').replace('...', '').replace('.', '').replace(',', '').replace('…', '').replace('RT', '').replace(/[^A-Za-z]/g, "");
+              return word.replace('RT', '').replace(/[^A-Za-z]/g, "");
             });
         })
+        // console.log(_.flatten(tweetResults));
+        // console.log(outData[0]);
         outData.push(_.flatten(tweetResults));
-        callback(null, _.uniq(tweetResults));
+        // console.log(outData)
+        // console.log(outData[9]);
+        callback(null, tweetResults);
       })
     },function(err){
         // console.log(err);
@@ -435,7 +484,8 @@ module.exports = {
       function(err,results) {
         // console.log(outData);
         toReturn.push(results);
-        res.send(outData);
+        console.log(outputJSON);
+        res.send(outputJSON);
     });
 
   },
