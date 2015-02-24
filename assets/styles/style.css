@@ -19,8 +19,12 @@ html {
 #visualization {
   overflow: auto;
   background-color: #000;
-}
+  margin:0 auto;
 
+}
+div#visualization svg{
+  height: 80%;
+}
 circle.node {
   cursor: pointer;
   stroke: #000;
@@ -34,9 +38,10 @@ circle.node.collapsed {
   stroke: #555;
 }
 .nodetext {
-  fill: #252929;
-  font-weight: bold;
-  text-shadow: 0 0 0.2em white;
+  fill: #ebfe1a;
+  font-family: 'Raleway', sans-serif;
+  font-size: 1.85em;
+
 }
 line.link {
   fill: none;
@@ -46,7 +51,7 @@ line.link {
 
 
 body {
-    background-color: #0c0d0e;
+    background-color: #000;
     font-family: 'Raleway', sans-serif;
     margin-bottom: 80px;
 
