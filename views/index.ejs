@@ -14,16 +14,35 @@
     </div>
       <div class="col-md-6 col-xs-12">
         <ul class="nav nav-pills navbar-right">
-      <li role="presentation" class="active" ><a ng-href="/metro/{{selectedMetro}}/show">Feels</a></li>
-      <li role="presentation"><a ng-href="/metro/{{selectedMetro}}/music">Music</a></li>
-      <li role="presentation"><a ng-href="/metro/{{selectedMetro}}/weather">Weather</a></li>
-    </ul>
+        <li role="presentation" ng-class="{active:isActive('/home')}" ><a ng-href="/">Home</a></li>
+          <li role="presentation" ng-class="{active:isActive('/metro/:id/show')}"><a ng-href="/metro/{{selectedMetro}}/show">Feelings</a></li>
+          <li role="presentation" ng-class="{active:isActive('/metro/:id/music')}"><a ng-href="/metro/{{selectedMetro}}/music">Music</a></li>
+          <li role="presentation" ng-class="{active:isActive('/metro/:id/weather')}"><a ng-href="/metro/{{selectedMetro}}/weather">Weather</a></li>
+      </ul>
     </div>
   </div>
 </div>
   </nav>
 
   <div class="container">
+      <div class="row text-center"><h1>Mood Mining: <small>Sentiment analysis visually by region. </small></h1></div>
       <ng-view></ng-view>
   </div>
+</div>
+
+<div class="container-fluid">
+<footer class="footer">
+  <div class="row text-center">
+    <div class="col-md-4 col-xs-4">
+      <p>&copy; Mood Mining, 2015. </p>
+    </div>
+    <div class="col-md-4 col-xs-4">
+      <p>Made with <a href="http://d3js.org/" target="_blank">D3 Charts.</a> </p>
+    </div>
+
+    <div class="col-md-4 col-xs-4">
+      <p><a href="/about">About</a> Mood Mining.</p>
+    </div>
+  </div>
+</footer>
 </div>
