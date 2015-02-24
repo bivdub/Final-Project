@@ -1,5 +1,5 @@
 {
-  "name": "Sails-Angular-Starter",
+  "name": "Final-Project",
   "private": true,
   "version": "0.0.0",
   "description": "a Sails application",
@@ -43,7 +43,7 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Bivdub/Sails-Angular-Starter.git"
+    "url": "git://github.com/Bivdub/Final-Project.git"
   },
   "author": "Bivdub",
   "license": ""
