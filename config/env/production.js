@@ -19,7 +19,7 @@ module.exports = {
     }
   },
   models:{
-    connection: 'myMongoDbServerProd',
+    connection: 'myMongoDbServer',
   }
 
 };
