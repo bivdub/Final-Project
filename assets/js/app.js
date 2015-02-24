@@ -10,6 +10,10 @@ baseApp.config(['$routeProvider','$locationProvider',function($routeProvider,$lo
         templateUrl:'/views/home.html',
         controller:'HomeCtrl'
     })
+     .when('/about',{
+        templateUrl:'/views/about.html',
+        controller:'HomeCtrl'
+    })
     .when('/graph',{
         templateUrl: '/views/graph.html',
         controller: 'GraphCtrl'

@@ -1,5 +1,6 @@
 baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParams','$timeout', function($scope,$http,$location,$routeParams,$timeout){
 
+  $scope.loading=true;
   $scope.cityId = $routeParams.id;
   $scope.sentimentScoreArray = '';
   $scope.positiveWords = '';
@@ -36,6 +37,9 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
         data[i].values.push({word:item,x:Math.random(), y:Math.random(), color: color, size:(pArray[key][item])*400});
       }
       i++;
+        $scope.$evalAsync(function(){
+          $scope.loading=false;
+        })
     }
 
     for (var key in nArray) {
@@ -72,6 +76,7 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
   }).error(function(err) {
     console.log(err);
   })
+
 
 
   var tooltipShowing=false;

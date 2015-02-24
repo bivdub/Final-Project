@@ -3,6 +3,9 @@ baseApp.controller('MainNavCtrl', ['$scope','$http', '$location','$routeParams',
   $scope.metros = {};
   $scope.metroId = '';
 
+   $scope.isActive = function(url){
+        return url == $location.path();
+    };
 
   $http.get('/api/metro').success(function(data){
     // console.log(data);

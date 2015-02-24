@@ -4,13 +4,8 @@ baseApp.controller('MetroWeatherCtrl', ['$scope', '$http', '$routeParams','$rout
 
   $scope.cityId = $routeParams.id
   var fill = d3.scale.category20();
- //   var width = 1024;
- //  var height = 576;
-
- // document.getElementById('vis', function(w, h){
 
 
- // })
 
 function drawWordCloud(){
 
