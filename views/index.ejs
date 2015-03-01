@@ -1,27 +1,26 @@
 <div ng-app="BaseApp">
-<nav>
-  <div class="container" ng-controller="MainNavCtrl">
-    <div class="row">
-    <div class="col-md-6 col-xs-12">
-    <form ng-submit="loadLocation()" class="form-inline">
-      <div class="form-group search">
-      <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
-        <input type="text" ng-model="asyncSelected" placeholder="please enter a city" typeahead="thing as thing.name for thing in metros | filter:$viewValue | limitTo:8"  typeahead-loading="loadingLocations" class="form-control">
-        <button class="btn btn-primary" ng-disabled="!asyncSelected">Check it out</a>
-
+  <nav>
+    <div class="container" ng-controller="MainNavCtrl">
+      <div class="row">
+        <div class="col-md-6 col-xs-12">
+          <form ng-submit="loadLocation()" class="form-inline">
+            <div class="form-group search">
+              <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+              <input type="text" ng-model="asyncSelected" placeholder="please enter a city" typeahead="thing as thing.name for thing in metros | filter:$viewValue | limitTo:8"  typeahead-loading="loadingLocations" class="form-control">
+              <button class="btn btn-primary" ng-disabled="(metros.indexOf(asyncSelected) === -1)">Check it out</button>
+            </div>
+          </form>
         </div>
-    </form>
+        <div class="col-md-6 col-xs-12">
+          <ul class="nav nav-pills navbar-right">
+            <li role="presentation" ng-class="{active:isActive('/home')}" ><a ng-href="/">Home</a></li>
+            <li role="presentation" ng-class="{active:isActive('/metro/:id/show')}"><a ng-href="/metro/{{selectedMetro}}/show">Feelings</a></li>
+            <li role="presentation" ng-class="{active:isActive('/metro/:id/music')}"><a ng-href="/metro/{{selectedMetro}}/music">Music</a></li>
+            <li role="presentation" ng-class="{active:isActive('/metro/:id/weather')}"><a ng-href="/metro/{{selectedMetro}}/weather">Weather</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
-      <div class="col-md-6 col-xs-12">
-        <ul class="nav nav-pills navbar-right">
-        <li role="presentation" ng-class="{active:isActive('/home')}" ><a ng-href="/">Home</a></li>
-          <li role="presentation" ng-class="{active:isActive('/metro/:id/show')}"><a ng-href="/metro/{{selectedMetro}}/show">Feelings</a></li>
-          <li role="presentation" ng-class="{active:isActive('/metro/:id/music')}"><a ng-href="/metro/{{selectedMetro}}/music">Music</a></li>
-          <li role="presentation" ng-class="{active:isActive('/metro/:id/weather')}"><a ng-href="/metro/{{selectedMetro}}/weather">Weather</a></li>
-      </ul>
-    </div>
-  </div>
-</div>
   </nav>
 
   <div class="container">

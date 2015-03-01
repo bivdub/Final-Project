@@ -1,3 +1,4 @@
+'use strict';
 baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParams','$timeout', function($scope,$http,$location,$routeParams,$timeout){
 
   $scope.loading=true;
@@ -17,8 +18,6 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
   }, false);
 
   var createData = function(pArray, nArray) {
-    // console.log(pArray);
-    // console.log(nArray);
   var color = tinycolor("#0186ef");
 
   var ncolor = tinycolor("#fe0072");
@@ -30,16 +29,12 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
         values: []
       });
       for (var item in pArray[key]) {
-        // console.log(item);
-        // console.log(pArray[key][item])
-        // console.log(pArray[key][score])
-
         data[i].values.push({word:item,x:Math.random(), y:Math.random(), color: color, size:(pArray[key][item])*400});
       }
       i++;
-        $scope.$evalAsync(function(){
-          $scope.loading=false;
-        })
+      $scope.$evalAsync(function(){
+        $scope.loading=false;
+      })
     }
 
     for (var key in nArray) {
@@ -48,15 +43,11 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
         values: []
       });
       for (var item in nArray[key]) {
-        // console.log(item);
-        // console.log(pArray[key][item])
-        // console.log(pArray[key][score])
         data[i].values.push({word:item,x:Math.random(), y:Math.random(), color: ncolor, size:(nArray[key][item])*400});
       }
       i++;
     }
     return data;
-
   }
 
   $http.get('/metro/'+$scope.cityId+'/getBasicInfo')
@@ -69,26 +60,20 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
     $scope.negativeArray = data[3].negativeArray;
     $scope.positiveCount = data[3].positiveCount;
     $scope.negativeCount = data[3].negativeCount;
-    $scope.metroTracks = data[4];
-    $scope.metroWeather = data[5];
     $scope.exampleData = createData($scope.positiveCount,$scope.negativeCount);
-    console.log($scope.exampleData)
   }).error(function(err) {
     console.log(err);
-  })
-
-
+  });
 
   var tooltipShowing=false;
 
   $scope.$on('elementMouseover.tooltip.directive',function(event,data){
-    // console.log(event,data)
     $scope.$evalAsync(function(){
       tooltipShowing=true;
       $scope.currentWord = data.point.word;
-    })
-
+    });
   });
+
   $scope.$on('elementMouseout.tooltip.directive',function(event,data){
     tooltipShowing=false;
     $timeout(function(){
@@ -97,5 +82,4 @@ baseApp.controller('MainMetroCtrl', ['$scope','$http', '$location', '$routeParam
     },200);
   });
 
-
-}])
+}]);

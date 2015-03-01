@@ -1,13 +1,13 @@
+'use strict'
 baseApp.controller('MetroWeatherCtrl', ['$scope', '$http', '$routeParams','$route', function($scope,$http,$routeParams,$route){
 
   $scope.loading=true;
 
-  $scope.cityId = $routeParams.id
+  $scope.cityId = $routeParams.id;
   var fill = d3.scale.category20();
-    var width,height;
+  var width,height;
 
   function drawWordCloud(){
-
 
     var draw = function(words) {
 
@@ -30,12 +30,11 @@ baseApp.controller('MetroWeatherCtrl', ['$scope', '$http', '$routeParams','$rout
 
       $scope.$evalAsync(function(){
         $scope.loading=false;
-      })
+      });
 
     }
 
-    var visObj = document.getElementById('vis')
-
+    var visObj = document.getElementById('vis');
 
     //determine width / height
     width = visObj.clientWidth;
@@ -85,7 +84,7 @@ baseApp.controller('MetroWeatherCtrl', ['$scope', '$http', '$routeParams','$rout
 
   }).error(function(err) {
     console.log(err);
-  })
+  });
 
 
-}])
+}]);

@@ -1,3 +1,4 @@
+'use strict';
 var baseApp = angular.module('BaseApp',['ui.bootstrap','ngRoute', 'nvd3ChartDirectives']);
 
 baseApp.config(['$routeProvider','$locationProvider',function($routeProvider,$locationProvider){
@@ -10,13 +11,9 @@ baseApp.config(['$routeProvider','$locationProvider',function($routeProvider,$lo
         templateUrl:'/views/home.html',
         controller:'HomeCtrl'
     })
-     .when('/about',{
+    .when('/about',{
         templateUrl:'/views/about.html',
         controller:'HomeCtrl'
-    })
-    .when('/graph',{
-        templateUrl: '/views/graph.html',
-        controller: 'GraphCtrl'
     })
     .when('/metro/:id/show',{
       templateUrl:'/views/metro/show.html',
@@ -29,6 +26,6 @@ baseApp.config(['$routeProvider','$locationProvider',function($routeProvider,$lo
     .when('/metro/:id/weather',{
       templateUrl:'/views/metro/weather.html',
       controller:'MetroWeatherCtrl'
-    })
+    });
 
 }]);

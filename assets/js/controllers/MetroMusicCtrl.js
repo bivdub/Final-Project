@@ -1,15 +1,14 @@
+'use strict';
 baseApp.controller('MetroMusicCtrl', ['$scope','$http','$routeParams','$route', function($scope,$http,$routeParams,$route){
 
   $scope.loading=true;
   $scope.cityId = $routeParams.id;
-  // var myFlower = new CodeFlower("#visualization", 1000, 1000);
-
 
   function drawFlower() {
 
     var width;
     var height;
-   var visObj = document.getElementById('visualization')
+    var visObj = document.getElementById('visualization');
 
     width = visObj.clientWidth;
     if(width > 900){
@@ -18,11 +17,10 @@ baseApp.controller('MetroMusicCtrl', ['$scope','$http','$routeParams','$route', 
       height = parseInt(width*(3/2));
     }
 
-    var myFlower = new CodeFlower("#visualization", Math.floor(width)/1.5, Math.floor(height)/1.25)
+    var myFlower = new CodeFlower("#visualization", Math.floor(width)/1.5, Math.floor(height)/1.25);
     myFlower.update($scope.data);
 
   }
-
 
   var resizing=0;
 
@@ -31,9 +29,9 @@ baseApp.controller('MetroMusicCtrl', ['$scope','$http','$routeParams','$route', 
     $scope.data = data;
     drawFlower();
 
-      $scope.$evalAsync(function(){
-        $scope.loading=false;
-      })
+    $scope.$evalAsync(function(){
+      $scope.loading=false;
+    });
 
     window.addEventListener('resize',function(){
       resizing += 1;
@@ -48,8 +46,6 @@ baseApp.controller('MetroMusicCtrl', ['$scope','$http','$routeParams','$route', 
 
   }).error(function(err) {
     console.log(err);
-  })
+  });
 
-}])
-
-  // myFlower.update(JSON.stringify($scope.exampleData))
+}]);
