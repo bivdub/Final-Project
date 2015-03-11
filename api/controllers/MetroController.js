@@ -74,7 +74,7 @@ module.exports = {
           if (error) throw error;
           var tweetResults = data.statuses.map(function(tweet) {
             return tweet.text.split(' ').map(function(word){
-              return word.replace('@','').replace('#','').replace('...', '').replace('.', '').replace(',', '').replace('…', '').replace('RT', '');
+              return word.replace('RT', '').replace(word.indexOf('fuck') !== -1, "").replace(word.indexOf('nigg') !== -1, "").replace(word.indexOf('fag') !== -1, "");
             }).join(' ');
           })
           outData.push(tweetResults);
@@ -186,7 +186,7 @@ module.exports = {
           if (error) throw error;
           var tweetResults = data.statuses.map(function(tweet) {
             return tweet.text.split(' ').map(function(word){
-              return word.replace('@','').replace('#','').replace('...', '').replace('.', '').replace(',', '').replace('…', '').replace('RT', '').replace(/[^A-Za-z]/g, "");
+              return word.replace('RT', '').replace(/[^A-Za-z]/g, "").replace(word.indexOf('fuck') !== -1, "").replace(word.indexOf('nigg') !== -1, "").replace(word.indexOf('fag') !== -1, "");
             }).filter(function(word){return word.length > 3});
           });
           outData.push(_.uniq(_.flatten(tweetResults)));
@@ -360,7 +360,7 @@ module.exports = {
           if (error) throw error;
           var tweetResults = data.statuses.map(function(tweet) {
             return tweet.text.split(' ').map(function(word){
-              return word.replace('RT', '').replace(/[^A-Za-z]/g, "");
+              return word.replace('RT', '').replace(/[^A-Za-z]/g, "").replace(word.indexOf('fuck') !== -1, "").replace(word.indexOf('nigg') !== -1, "").replace(word.indexOf('fag') !== -1, "");
             });
           })
           outData.push(_.flatten(tweetResults));
